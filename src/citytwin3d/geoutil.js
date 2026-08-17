@@ -224,27 +224,28 @@ export function calculateBuildingHeight(feature, metersPerDegreeLon) {
 }
 
 /**
- * Deterministic pastel architectural color assignment
+ * Deterministic pastel architectural color assignment (15–20% Darker Soft Pastel Palette)
  */
 export function getBuildingColors(feature, height) {
   const props = feature?.properties || {}
   const type = (props.building || '').toLowerCase()
   const osmId = Math.abs(parseInt(props.osm_id, 10) || 0)
 
-  // Curated Light Pastel Architectural Palette Options [Wall RGB, Roof RGB]
+  // Soft Pastel Palette (15–20% darker than baseline for sharp contrast against light terrain)
   const PASTEL_PALETTES = [
-    { wall: [0.96, 0.94, 0.88], roof: [0.84, 0.80, 0.72] }, // Warm Ivory / Cream
-    { wall: [0.94, 0.90, 0.84], roof: [0.82, 0.76, 0.68] }, // Light Sand / Beige
-    { wall: [0.96, 0.89, 0.84], roof: [0.86, 0.76, 0.70] }, // Pale Peach / Warm Coral
-    { wall: [0.86, 0.92, 0.86], roof: [0.72, 0.82, 0.72] }, // Soft Sage / Muted Mint
-    { wall: [0.85, 0.90, 0.95], roof: [0.72, 0.78, 0.86] }, // Light Slate / Ice Blue
-    { wall: [0.92, 0.88, 0.94], roof: [0.80, 0.74, 0.84] }, // Pale Lavender / Mauve
-    { wall: [0.92, 0.85, 0.80], roof: [0.82, 0.72, 0.66] }, // Warm Terracotta / Sandstone
+    { wall: [0.79, 0.72, 0.58], roof: [0.67, 0.60, 0.46] }, // Warm Ivory (#C9B895)
+    { wall: [0.74, 0.67, 0.53], roof: [0.62, 0.55, 0.41] }, // Sand (#BDAA88)
+    { wall: [0.79, 0.56, 0.51], roof: [0.67, 0.44, 0.39] }, // Soft Peach (#C99082)
+    { wall: [0.58, 0.68, 0.74], roof: [0.46, 0.56, 0.62] }, // Muted Blue (#95ADBC)
+    { wall: [0.58, 0.68, 0.59], roof: [0.46, 0.56, 0.47] }, // Sage (#94AD97)
+    { wall: [0.65, 0.61, 0.73], roof: [0.53, 0.49, 0.61] }, // Lavender (#A69BB9)
+    { wall: [0.66, 0.64, 0.62], roof: [0.54, 0.52, 0.50] }, // Warm Gray (#A8A39D)
+    { wall: [0.77, 0.72, 0.63], roof: [0.65, 0.60, 0.51] }, // Cream (#C5B7A0)
   ]
 
-  // Known apartment towers (>50m)
+  // Known apartment towers (>50m) — Warm Terracotta Accent
   if (height > 50) {
-    return { wallColor: [0.95, 0.89, 0.82], roofColor: [0.86, 0.76, 0.66] }
+    return { wallColor: [0.82, 0.62, 0.50], roofColor: [0.70, 0.50, 0.38] }
   }
 
   // Type-specific pastel selection with OSM ID hash variation
@@ -257,31 +258,31 @@ export function getBuildingColors(feature, height) {
     case 'commercial':
     case 'commercial;yes':
     case 'office':
-      paletteIndex = 4 // Light Slate / Ice Blue
+      paletteIndex = 3 // Muted Blue
       break
     case 'retail':
-      paletteIndex = 2 // Pale Peach
+      paletteIndex = 2 // Soft Peach
       break
     case 'hospital':
-      paletteIndex = 3 // Soft Sage
+      paletteIndex = 4 // Sage
       break
     case 'school':
-      paletteIndex = 0 // Warm Cream
+      paletteIndex = 7 // Cream
       break
     case 'train_station':
     case 'transportation':
-      paletteIndex = 4 // Ice Blue
+      paletteIndex = 3 // Muted Blue
       break
     case 'industrial':
     case 'warehouse':
-      paletteIndex = 1 // Light Beige
+      paletteIndex = 6 // Warm Gray
       break
     case 'residential':
     case 'house':
-      paletteIndex = osmId % 4 // Variety of warm residential pastels
+      paletteIndex = osmId % 5 // Variety of soft residential pastels
       break
     default:
-      if (height > 16) paletteIndex = 4
+      if (height > 16) paletteIndex = 3
       else if (height > 10) paletteIndex = (osmId + 2) % PASTEL_PALETTES.length
       break
   }
