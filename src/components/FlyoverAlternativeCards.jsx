@@ -1,85 +1,82 @@
-import { memo } from 'react'
-import { FLYOVER_ALTERNATIVES } from '../citytwin3d/flyoverData'
+import { memo, useMemo } from 'react'
+import { getScenarioComparison } from '../citytwin3d/scenarioImpactModel'
 
-const impactColor = {
-  Low: '#10b981',
-  Moderate: '#f59e0b',
-  High: '#ef4444',
-  'Very High': '#a855f7',
-  'Low–Moderate': '#34d399',
-  'Moderate–High': '#fb923c',
-}
+function AlternativeCard({ scenario, isActive, isRecommended, onSelect }) {
+  const accentColor =
+    scenario.id === 'alternative3'
+      ? '#10b981'
+      : scenario.id === 'alternative2'
+        ? '#f59e0b'
+        : '#3b82f6'
 
-function impactBadge(trafficImpact) {
-  const level = trafficImpact?.split('—')[0]?.trim() || 'Moderate'
-  const color = impactColor[level] || '#94a3b8'
-  return (
-    <span
-      style={{
-        background: `${color}25`,
-        color,
-        border: `1px solid ${color}55`,
-        borderRadius: '5px',
-        padding: '2px 7px',
-        fontSize: '9px',
-        fontWeight: 800,
-        fontFamily: "'DM Mono', monospace",
-        letterSpacing: '0.08em',
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {level} Impact
-    </span>
-  )
-}
-
-function AlternativeCard({ alt, isActive, onSelect }) {
   return (
     <button
       type="button"
-      onClick={() => onSelect(alt.id)}
+      onClick={() => onSelect(scenario.id)}
       style={{
         flex: '1 1 0',
         minWidth: '220px',
         maxWidth: '380px',
-        background: isActive ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.65)',
+        background: isActive ? 'rgba(30, 41, 59, 0.92)' : 'rgba(15, 23, 42, 0.65)',
         border: isActive
-          ? `2px solid ${alt.accentColor}`
-          : '1px solid rgba(255, 255, 255, 0.1)',
+          ? `2px solid ${accentColor}`
+          : isRecommended
+            ? '2px solid #22c55e'
+            : '1px solid rgba(255, 255, 255, 0.1)',
         borderRadius: '14px',
         padding: '13px 14px',
         cursor: 'pointer',
         textAlign: 'left',
         boxShadow: isActive
-          ? `0 6px 24px ${alt.accentColor}35`
+          ? `0 6px 24px ${accentColor}35`
           : '0 2px 8px rgba(0, 0, 0, 0.2)',
         transition: 'all 0.18s ease',
         outline: 'none',
         position: 'relative',
       }}
     >
-      {/* Active indicator pill */}
+      {/* Recommended Pill Badge */}
+      {isRecommended && (
+        <span
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: isActive ? '70px' : '10px',
+            background: '#22c55e',
+            color: '#0f172a',
+            borderRadius: '99px',
+            padding: '2px 8px',
+            fontSize: '9px',
+            fontWeight: 900,
+            fontFamily: "'DM Mono', monospace",
+            letterSpacing: '0.08em',
+          }}
+        >
+          ★ BEST CHOICE
+        </span>
+      )}
+
+      {/* Active Indicator */}
       {isActive && (
         <span
           style={{
             position: 'absolute',
             top: '10px',
             right: '10px',
-            background: alt.accentColor,
+            background: accentColor,
             color: '#0f172a',
             borderRadius: '99px',
             padding: '2px 8px',
             fontSize: '9px',
             fontWeight: 800,
             fontFamily: "'DM Mono', monospace",
-            letterSpacing: '0.1em',
           }}
         >
           ACTIVE
         </span>
       )}
 
-      {/* Alt number badge */}
+      {/* Alt Title */}
       <div
         style={{
           display: 'flex',
@@ -93,7 +90,7 @@ function AlternativeCard({ alt, isActive, onSelect }) {
             width: '28px',
             height: '28px',
             borderRadius: '8px',
-            background: isActive ? alt.accentColor : 'rgba(255, 255, 255, 0.08)',
+            background: isActive ? accentColor : 'rgba(255, 255, 255, 0.08)',
             color: isActive ? '#0f172a' : '#94a3b8',
             display: 'grid',
             placeItems: 'center',
@@ -102,7 +99,7 @@ function AlternativeCard({ alt, isActive, onSelect }) {
             flexShrink: 0,
           }}
         >
-          {alt.id.replace('alternative', '')}
+          {scenario.id.replace('alternative', '')}
         </div>
         <div>
           <div
@@ -112,7 +109,7 @@ function AlternativeCard({ alt, isActive, onSelect }) {
               lineHeight: 1.2,
             }}
           >
-            {alt.shortName}
+            {scenario.shortName}
           </div>
           <div
             style={{
@@ -121,12 +118,12 @@ function AlternativeCard({ alt, isActive, onSelect }) {
               marginTop: '1px',
             }}
           >
-            {alt.alignment}
+            Score: <strong style={{ color: '#38bdf8' }}>{scenario.overallScore}/100</strong>
           </div>
         </div>
       </div>
 
-      {/* Metrics grid */}
+      {/* Dynamic Metrics Grid */}
       <div
         style={{
           display: 'grid',
@@ -136,12 +133,12 @@ function AlternativeCard({ alt, isActive, onSelect }) {
         }}
       >
         {[
-          { label: 'Length', value: `${alt.metrics.lengthKm * 1000}m` },
-          { label: 'Lanes', value: alt.metrics.lanes },
-          { label: 'Cap./Hr', value: alt.metrics.estimatedCapacityVPH.toLocaleString() },
-          { label: 'Area', value: `${alt.metrics.affectedAreaHa} ha` },
-          { label: 'Cost', value: alt.metrics.estimatedCostCr.split(' ')[0] + ' Cr' },
-          { label: 'Months', value: alt.metrics.constructionMonths },
+          { label: 'Length', value: `${scenario.lengthM}m` },
+          { label: 'Lanes', value: `${scenario.lanes} Lanes` },
+          { label: 'Capacity', value: `${scenario.capacityVph.toLocaleString()} vph` },
+          { label: 'Area', value: `${scenario.affectedAreaHa} ha` },
+          { label: 'Est. Cost', value: `₹ ${scenario.costCr} Cr` },
+          { label: 'Build Time', value: `${scenario.constructionMonths} mos` },
         ].map(({ label, value }) => (
           <div
             key={label}
@@ -163,7 +160,7 @@ function AlternativeCard({ alt, isActive, onSelect }) {
             </div>
             <div
               style={{
-                font: "700 11px 'Manrope', sans-serif",
+                font: "700 10px 'Manrope', sans-serif",
                 color: '#f8fafc',
               }}
             >
@@ -172,24 +169,19 @@ function AlternativeCard({ alt, isActive, onSelect }) {
           </div>
         ))}
       </div>
-
-      {/* Impact badge + disclaimer */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-        {impactBadge(alt.metrics.trafficImpact)}
-        <span
-          style={{
-            font: "500 8px 'DM Mono', monospace",
-            color: '#64748b',
-          }}
-        >
-          ★ Prototype Estimate
-        </span>
-      </div>
     </button>
   )
 }
 
-function FlyoverAlternativeCards({ activeFlyoverId, onSelectAlternative }) {
+function FlyoverAlternativeCards({ activeFlyoverId, onSelectAlternative, selectedPriority = null, cityEdits = {} }) {
+  const comparison = useMemo(() => {
+    return getScenarioComparison(cityEdits, selectedPriority)
+  }, [cityEdits, selectedPriority])
+
+  const flyoverScenarios = useMemo(() => {
+    return comparison.scenarios.filter((s) => s.id.startsWith('alternative'))
+  }, [comparison])
+
   return (
     <div className="bottom-deck-overlay glass-panel" style={{ padding: '12px 14px' }}>
       {/* Header */}
@@ -210,7 +202,7 @@ function FlyoverAlternativeCards({ activeFlyoverId, onSelectAlternative }) {
               textTransform: 'uppercase',
             }}
           >
-            FLYOVER PLANNING SCENARIOS
+            FLYOVER PLANNING ALTERNATIVES
           </div>
           <div
             style={{
@@ -219,26 +211,26 @@ function FlyoverAlternativeCards({ activeFlyoverId, onSelectAlternative }) {
               marginTop: '2px',
             }}
           >
-            THREE FLYOVER ALTERNATIVES — Sitabuldi Corridor
+            THREE DISTINCT ENGINEERING DESIGNS — Sitabuldi Junction Anchor
           </div>
         </div>
         <span
           style={{
-            background: 'rgba(245, 158, 11, 0.16)',
-            border: '1px solid rgba(245, 158, 11, 0.3)',
-            color: '#fbbf24',
+            background: 'rgba(34, 197, 94, 0.16)',
+            border: '1px solid rgba(34, 197, 94, 0.3)',
+            color: '#4ade80',
             borderRadius: '6px',
             padding: '3px 8px',
             fontSize: '9px',
-            fontWeight: 700,
+            fontWeight: 800,
             fontFamily: "'DM Mono', monospace",
           }}
         >
-          ★ All metrics: Prototype / Scenario Data
+          ★ Priority-Weighted Evaluation
         </span>
       </div>
 
-      {/* Cards row */}
+      {/* Cards Row */}
       <div
         style={{
           display: 'flex',
@@ -246,11 +238,12 @@ function FlyoverAlternativeCards({ activeFlyoverId, onSelectAlternative }) {
           flexWrap: 'wrap',
         }}
       >
-        {FLYOVER_ALTERNATIVES.map((alt) => (
+        {flyoverScenarios.map((scenario) => (
           <AlternativeCard
-            key={alt.id}
-            alt={alt}
-            isActive={activeFlyoverId === alt.id}
+            key={scenario.id}
+            scenario={scenario}
+            isActive={activeFlyoverId === scenario.id}
+            isRecommended={comparison.recommended.id === scenario.id}
             onSelect={onSelectAlternative}
           />
         ))}

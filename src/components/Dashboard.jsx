@@ -3,6 +3,7 @@ import AlternativeToggle from './AlternativeToggle'
 import ImpactPanel from './ImpactPanel'
 import VotingPanel from './VotingPanel'
 import InspectorPanel from './InspectorPanel'
+import ScenarioComparisonModal from './ScenarioComparisonModal'
 import { projects } from '../data/projects'
 import CityTwinScene from '../citytwin3d/CityTwinScene'
 import { useCityEditState } from '../citytwin3d/useCityEditState'
@@ -12,6 +13,7 @@ export default function Dashboard(p) {
   const [dayNightMode, setDayNightMode] = useState('day')
   const [viewMode, setViewMode] = useState('3d')
   const [activeIntervention, setActiveIntervention] = useState('flyover')
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false)
 
   const [layerVisibility, setLayerVisibility] = useState({
     buildings: true,
@@ -65,12 +67,29 @@ export default function Dashboard(p) {
       <header>
         <div className="logo">CT</div>
         <div>
-          <div className="kicker">Smart City Planning</div>
-          <h1>CITYTWIN NAGPUR</h1>
-          <p>Build it digitally before you build it physically.</p>
+          <div className="kicker">Smart City Planning & Spatial Decision Twin</div>
+          <h1>CITYTWIN NAGPUR — SITABULDI JUNCTION</h1>
+          <p>Real-world spatial decision support: Simulate traffic, interventions & multi-criteria impacts before ground-breaking.</p>
         </div>
-        <aside>
-          Sitabuldi Corridor, Nagpur <b>● LIVE</b>
+        <aside style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+          <div>Sitabuldi Junction Anchor <b>● LIVE SCENARIO TWIN</b></div>
+          <button
+            type="button"
+            onClick={() => setIsComparisonOpen(true)}
+            style={{
+              background: '#0284c7',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '6px 12px',
+              fontSize: '11px',
+              fontWeight: 800,
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
+            }}
+          >
+            📊 Compare All Options
+          </button>
         </aside>
       </header>
 
@@ -81,7 +100,7 @@ export default function Dashboard(p) {
           <div className="between">
             <div>
               <div className="kicker">Digital planning environment</div>
-              <h2>3D DIGITAL TWIN</h2>
+              <h2>3D DIGITAL TWIN — SITABULDI JUNCTION</h2>
             </div>
             <span className="badge">21.1475° N, 79.0899° E</span>
           </div>
@@ -109,12 +128,16 @@ export default function Dashboard(p) {
               onToggleDayNight={handleToggleDayNight}
               viewMode={viewMode}
               _onChangeViewMode={setViewMode}
+              selectedPriority={p.selectedPriority}
             />
           </div>
 
           <footer>
-            ● Sitabuldi 3D Geographic Digital Twin · Scenario:{' '}
-            {activeIntervention.toUpperCase()} ·{' '}
+            ● Sitabuldi 3D Geographic Digital Twin · Active Scenario:{' '}
+            {activeIntervention === 'flyover'
+              ? `FLYOVER (${editState.activeFlyoverAlternativeId.toUpperCase()})`
+              : activeIntervention.toUpperCase()}{' '}
+            ·{' '}
             {editState.appMode === 'edit'
               ? 'Sandbox Edit Mode Active'
               : 'Explore Mode Active'}
@@ -149,8 +172,13 @@ export default function Dashboard(p) {
             canRedo={editState.canRedo}
           />
 
-          {/* Scenario Impact Analysis Panel (Radar Chart + Bar Chart) */}
-          <ImpactPanel activeProject={p.activeProject} />
+          {/* Scenario Impact Analysis Panel (Multi-Criteria Score + Radar + Cost Bar Chart) */}
+          <ImpactPanel
+            activeProject={p.activeProject}
+            activeFlyoverAlternativeId={editState.activeFlyoverAlternativeId}
+            selectedPriority={p.selectedPriority}
+            cityEdits={editState.cityEdits}
+          />
         </aside>
       </div>
 
@@ -197,6 +225,14 @@ export default function Dashboard(p) {
           </small>
         </section>
       </div>
+
+      {/* Side-by-Side Planning Scenario Comparison Matrix Modal */}
+      <ScenarioComparisonModal
+        isOpen={isComparisonOpen}
+        onClose={() => setIsComparisonOpen(false)}
+        cityEdits={editState.cityEdits}
+        selectedPriority={p.selectedPriority}
+      />
     </main>
   )
 }

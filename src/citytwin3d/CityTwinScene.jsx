@@ -19,6 +19,7 @@ import UnderpassLayer from './layers/UnderpassLayer'
 import JunctionRedesignLayer from './layers/JunctionRedesignLayer'
 import TrafficSimulationLayer from './layers/TrafficSimulationLayer'
 import { getFlyoverById } from './flyoverData'
+import FlyoverAlternativeCards from '../components/FlyoverAlternativeCards'
 
 const DEFAULT_CAMERA_POS = [-140, 140, 180]
 const ISOMETRIC_CAMERA_POS = [280, 280, 280]
@@ -234,7 +235,10 @@ function SceneContents({
       )}
 
       {/* Animated Traffic Simulation & Congestion Heat Layer */}
-      <TrafficSimulationLayer activeIntervention={activeIntervention} />
+      <TrafficSimulationLayer
+        activeIntervention={activeIntervention}
+        activeFlyoverAlternativeId={activeFlyoverAlternative?.id}
+      />
     </>
   )
 }
@@ -271,6 +275,7 @@ function CityTwinScene({
   onToggleDayNight,
   viewMode = '3d',
   _onChangeViewMode,
+  selectedPriority = null,
 }) {
   const [buildingsData, setBuildingsData] = useState(null)
   const [roadsData, setRoadsData] = useState(null)
@@ -580,63 +585,15 @@ function CityTwinScene({
           pointerEvents: 'auto',
         }}
       >
-        {/* Flyover Alternative Selector Row */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '6px',
-            background: 'rgba(255, 255, 255, 0.92)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid var(--line, #d9e3e5)',
-            borderRadius: '10px',
-            padding: '4px 6px',
-            alignItems: 'center',
-            boxShadow: '0 4px 12px rgba(16, 43, 54, 0.08)',
-          }}
-        >
-          <span
-            style={{
-              font: "700 9px 'DM Mono', monospace",
-              color: '#507078',
-              paddingLeft: '4px',
-              paddingRight: '6px',
-              textTransform: 'uppercase',
-            }}
-          >
-            Flyover:
-          </span>
-          {[
-            { id: 'alternative1', label: 'Alt-1: Direct Connector' },
-            { id: 'alternative2', label: 'Alt-2: Kingsway Elevated' },
-            { id: 'alternative3', label: 'Alt-3: Ram Jhula Extended' },
-          ].map((alt) => {
-            const isActive = activeFlyoverAlternativeId === alt.id
-            return (
-              <button
-                key={alt.id}
-                type="button"
-                onClick={() => onSelectAlternative?.(alt.id)}
-                style={{
-                  flex: 1,
-                  padding: '5px 8px',
-                  borderRadius: '6px',
-                  border: isActive
-                    ? '1px solid #f59e0b'
-                    : '1px solid var(--line, #d9e3e5)',
-                  background: isActive ? '#fef3c7' : '#ffffff',
-                  color: isActive ? '#92400e' : '#334155',
-                  fontSize: '10px',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {alt.label}
-              </button>
-            )
-          })}
-        </div>
+        {/* Flyover Alternative Cards & Evaluation Overlay */}
+        {activeIntervention === 'flyover' && (
+          <FlyoverAlternativeCards
+            activeFlyoverId={activeFlyoverAlternativeId}
+            onSelectAlternative={onSelectAlternative}
+            selectedPriority={selectedPriority}
+            cityEdits={cityEdits}
+          />
+        )}
 
         {/* GIS Layers Toggle Bar */}
         <div

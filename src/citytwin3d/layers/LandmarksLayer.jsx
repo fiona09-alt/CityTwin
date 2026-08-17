@@ -33,7 +33,7 @@ function LandmarkItem({
 
   return (
     <group position={[worldX, 0, worldZ]}>
-      {/* 3D Pin Stem & Small Sphere Indicator */}
+      {/* 3D Pin Stem & Indicator */}
       <mesh position={[0, 6, 0]} onClick={handleClick}>
         <cylinderGeometry args={[0.8, 0.2, 12, 12]} />
         <meshStandardMaterial
@@ -71,14 +71,14 @@ function LandmarkItem({
             gap: '4px',
             background: isSelected
               ? 'rgba(245, 158, 11, 0.95)'
-              : 'rgba(15, 23, 42, 0.82)',
+              : 'rgba(15, 23, 42, 0.85)',
             backdropFilter: 'blur(6px)',
             color: isSelected ? '#000000' : '#ffffff',
             border: isSelected
               ? '1.5px solid #fbbf24'
-              : '1px solid rgba(255, 255, 255, 0.2)',
+              : '1px solid rgba(255, 255, 255, 0.25)',
             borderRadius: '12px',
-            padding: '2px 7px',
+            padding: '3px 8px',
             fontSize: '9px',
             fontWeight: 800,
             fontFamily: "'Manrope', sans-serif",
@@ -106,6 +106,35 @@ function LandmarkItem({
   )
 }
 
+/**
+ * Main Sitabuldi Junction Core Label Badge
+ */
+function JunctionAnchorLabel() {
+  return (
+    <group position={[-140, 0, 20]}>
+      <Html position={[0, 24, 0]} center distanceFactor={350} zIndexRange={[100, 0]}>
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #0284c7, #0369a1)',
+            color: '#ffffff',
+            border: '2px solid #38bdf8',
+            borderRadius: '8px',
+            padding: '4px 10px',
+            fontSize: '10px',
+            fontWeight: 900,
+            fontFamily: "'DM Mono', monospace",
+            whiteSpace: 'nowrap',
+            boxShadow: '0 4px 12px rgba(2, 132, 199, 0.4)',
+            letterSpacing: '0.08em',
+          }}
+        >
+          ★ SITABULDI JUNCTION ANCHOR
+        </div>
+      </Html>
+    </group>
+  )
+}
+
 function LandmarksLayer({
   data,
   geoTransform,
@@ -116,10 +145,12 @@ function LandmarksLayer({
     return data?.features || []
   }, [data])
 
-  if (!landmarks.length || !geoTransform) return null
+  if (!geoTransform) return null
 
   return (
     <group name="landmarks-layer">
+      <JunctionAnchorLabel />
+
       {landmarks.map((lm, idx) => {
         const isSelected =
           selectedObject?.id ===

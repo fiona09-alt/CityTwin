@@ -273,9 +273,9 @@ function InspectorPanel({
               fontFamily: "'DM Mono', monospace",
             }}
           >
-            3D GIZMO CONTROLS
+            3D GIZMO & 4-DIRECTION PLANAR NUDGE
           </div>
-          <div style={{ display: 'flex', gap: '4px' }}>
+          <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
             <button
               type="button"
               onClick={() => setGizmoMode('translate')}
@@ -302,6 +302,111 @@ function InspectorPanel({
               {isHidden ? '👁 Show' : '✕ Hide'}
             </button>
           </div>
+
+          {/* 4-Directional Planar Offset Buttons (West, East, North, South, Up, Down) */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr',
+              gap: '3px',
+              marginTop: '4px',
+            }}
+          >
+            <button
+              type="button"
+              title="Nudge West (-X)"
+              onClick={() =>
+                updateObjectEdit(id, type, {
+                  offsetX: parseFloat(((objEdits.offsetX || 0) - 2).toFixed(1)),
+                })
+              }
+              style={nudgeButtonStyle}
+            >
+              ← W
+            </button>
+            <button
+              type="button"
+              title="Nudge East (+X)"
+              onClick={() =>
+                updateObjectEdit(id, type, {
+                  offsetX: parseFloat(((objEdits.offsetX || 0) + 2).toFixed(1)),
+                })
+              }
+              style={nudgeButtonStyle}
+            >
+              E →
+            </button>
+            <button
+              type="button"
+              title="Nudge North (-Z)"
+              onClick={() =>
+                updateObjectEdit(id, type, {
+                  offsetZ: parseFloat(((objEdits.offsetZ || 0) - 2).toFixed(1)),
+                })
+              }
+              style={nudgeButtonStyle}
+            >
+              ↑ N
+            </button>
+            <button
+              type="button"
+              title="Nudge South (+Z)"
+              onClick={() =>
+                updateObjectEdit(id, type, {
+                  offsetZ: parseFloat(((objEdits.offsetZ || 0) + 2).toFixed(1)),
+                })
+              }
+              style={nudgeButtonStyle}
+            >
+              S ↓
+            </button>
+            <button
+              type="button"
+              title="Elevate (+Y)"
+              onClick={() =>
+                updateObjectEdit(id, type, {
+                  offsetY: parseFloat(((objEdits.offsetY || 0) + 1).toFixed(1)),
+                })
+              }
+              style={nudgeButtonStyle}
+            >
+              ▲ Up
+            </button>
+            <button
+              type="button"
+              title="Lower (-Y)"
+              onClick={() =>
+                updateObjectEdit(id, type, {
+                  offsetY: parseFloat(((objEdits.offsetY || 0) - 1).toFixed(1)),
+                })
+              }
+              style={nudgeButtonStyle}
+            >
+              ▼ Down
+            </button>
+          </div>
+
+          {/* Spatial Collision Warning Banner */}
+          {(Math.abs(objEdits.offsetX || 0) > 15 || Math.abs(objEdits.offsetZ || 0) > 15) && (
+            <div
+              style={{
+                marginTop: '6px',
+                padding: '4px 6px',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: '5px',
+                color: '#b91c1c',
+                fontSize: '9px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <span>⚠️</span>
+              <span>Spatial Clearance Alert: Offset exceeds 15m corridor threshold.</span>
+            </div>
+          )}
         </div>
       )}
 
@@ -841,5 +946,18 @@ const historyButtonStyle = (disabled) => ({
   fontWeight: 700,
   cursor: disabled ? 'not-allowed' : 'pointer',
 })
+
+const nudgeButtonStyle = {
+  border: '1px solid #d9e3e5',
+  background: '#ffffff',
+  color: '#334155',
+  borderRadius: '4px',
+  padding: '3px 0',
+  fontSize: '9px',
+  fontWeight: 800,
+  fontFamily: "'DM Mono', monospace",
+  cursor: 'pointer',
+  textAlign: 'center',
+}
 
 export default memo(InspectorPanel)
