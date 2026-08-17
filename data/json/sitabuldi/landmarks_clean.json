@@ -1,0 +1,102 @@
+{
+  "type": "FeatureCollection",
+  "name": "landmarks_clean",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "landmark_sitabuldi_fort",
+        "osm_id": 246262219,
+        "name": "Sitabuldi Fort",
+        "category": "Heritage / Fort",
+        "description": "Historical 19th-century hillock fort overlooking the Sitabuldi arterial corridor and Nagpur urban center.",
+        "status": "Protected Heritage Site",
+        "elevation": "315 m ASL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.0818, 21.1466]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "landmark_empress_mall",
+        "osm_id": 398516190,
+        "name": "Empress Mall",
+        "category": "Commercial / Retail Hub",
+        "description": "Major commercial shopping and entertainment complex adjacent to Empress City and Gandhi Sagar.",
+        "status": "Operational Commercial Landmark",
+        "elevation": "310 m ASL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.0932, 21.1481]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "landmark_nagpur_junction",
+        "osm_id": 1122408776,
+        "name": "Nagpur Junction",
+        "category": "Transit Hub",
+        "description": "Primary central railway junction terminal of Nagpur with high passenger and freight throughput.",
+        "status": "Active Rail Terminal",
+        "elevation": "312 m ASL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.0882, 21.1525]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "landmark_cotton_market",
+        "osm_id": 27259793,
+        "name": "Cotton Market",
+        "category": "Wholesale Market",
+        "description": "Historic wholesale agricultural and commercial market district in central Sitabuldi.",
+        "status": "Active Commercial Market",
+        "elevation": "311 m ASL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.0906, 21.1458]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "landmark_rbi",
+        "osm_id": 314123073,
+        "name": "Reserve Bank of India",
+        "category": "Civic / Financial",
+        "description": "Regional headquarters of the Reserve Bank of India in Nagpur.",
+        "status": "Government / Banking Authority",
+        "elevation": "314 m ASL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.0785, 21.151]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "landmark_nmc",
+        "osm_id": 314128740,
+        "name": "Nagpur Municipal Corporation",
+        "category": "Civic Administration",
+        "description": "Administrative headquarters building of Nagpur Municipal Corporation.",
+        "status": "Municipal Administrative Center",
+        "elevation": "314 m ASL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.0782, 21.1542]
+      }
+    }
+  ]
+}

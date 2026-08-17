@@ -1,0 +1,29 @@
+{
+  "type": "FeatureCollection",
+  "name": "study_boundary",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sitabuldi_Study_Area",
+        "description": "Sitabuldi urban corridor and landmark context study boundary",
+        "south": 21.137,
+        "west": 79.075,
+        "north": 21.158,
+        "east": 79.105
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.075, 21.137],
+            [79.105, 21.137],
+            [79.105, 21.158],
+            [79.075, 21.158],
+            [79.075, 21.137]
+          ]
+        ]
+      }
+    }
+  ]
+}

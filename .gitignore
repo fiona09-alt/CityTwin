@@ -13,6 +13,10 @@ dist-ssr
 *.local
 .env
 
+# Temporary and generated build/fetch directories
+output/
+sitabuldi_fetcher_temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
